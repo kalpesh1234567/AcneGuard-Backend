@@ -18,3 +18,4 @@ pandas
 scikit-learn
 google-genai
 gunicorn
+aiosmtplib
