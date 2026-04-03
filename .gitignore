@@ -1,0 +1,23 @@
+# AcneGuard Backend — Git Exclude
+# -----------------------------
+
+# Large Files & Datasets (Privacy/Performance)
+data/
+dataset/
+*.pth
+*.joblib
+
+# Local Secrets
+.env
+
+# Cache & Temporary Files
+__pycache__/
+*.pyc
+temp_uploads/
+.ipynb_checkpoints/
+training_log.txt
+training_logs.txt
+
+# OS Files
+.DS_Store
+Thumbs.db
