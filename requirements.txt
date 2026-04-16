@@ -1,3 +1,4 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch
 torchvision
 pillow
@@ -7,7 +8,7 @@ fastapi
 uvicorn
 python-multipart
 mediapipe
-opencv-python
+opencv-python-headless
 motor
 bcrypt
 python-jose[cryptography]
@@ -19,3 +20,4 @@ scikit-learn
 google-genai
 gunicorn
 aiosmtplib
+

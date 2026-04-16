@@ -4,7 +4,6 @@
 # Large Files & Datasets (Privacy/Performance)
 data/
 dataset/
-*.pth
 *.joblib
 
 # Local Secrets

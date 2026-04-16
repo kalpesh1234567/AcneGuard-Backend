@@ -3,10 +3,9 @@ services:
     name: acneguard-backend
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn -w 1 --timeout 120 -b 0.0.0.0:$PORT -k uvicorn.workers.UvicornWorker api:app
+    startCommand: gunicorn -w 1 --timeout 300 -b 0.0.0.0:$PORT -k uvicorn.workers.UvicornWorker --preload api:app
+    healthCheckPath: /
     envVars:
-      - key: PORT
-        value: 8000
       - key: PYTHON_VERSION
         value: 3.10.0
       - key: APP_ENV
