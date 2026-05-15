@@ -16,6 +16,7 @@ import os
 import json
 import time
 import logging
+import asyncio
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
@@ -155,7 +156,9 @@ async def analyze_acne(
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        analysis    = vision_service.analyze_image(file_path)
+        # Run CPU-bound vision inference in a thread pool (avoids blocking the event loop)
+        loop = asyncio.get_event_loop()
+        analysis = await loop.run_in_executor(None, vision_service.analyze_image, file_path)
 
         if user_routine:
             try:
