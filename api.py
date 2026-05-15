@@ -6,13 +6,17 @@ Endpoints:
   GET  /                  → Health check
   /auth/*                 → Authentication (register, login, me, forgot-password, reset-password)
 """
-from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 from pydantic import BaseModel
 from typing import Optional
 import shutil
 import os
 import json
+import time
+import logging
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
@@ -45,6 +49,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Request Logger ───────────────────────────────────────────────────────────
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s  %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger("acneguard")
+
+class RequestLoggerMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        start   = time.perf_counter()
+        client  = request.client.host if request.client else "unknown"
+        method  = request.method
+        path    = request.url.path
+        qs      = f"?{request.url.query}" if request.url.query else ""
+
+        logger.info(f"→  {method:7s} {path}{qs}  [{client}]")
+        try:
+            response: Response = await call_next(request)
+        except Exception as exc:
+            logger.error(f"✗  {method:7s} {path}  ERROR: {exc}")
+            raise
+        elapsed = (time.perf_counter() - start) * 1000
+        status  = response.status_code
+        icon    = "✓" if status < 400 else "✗"
+        logger.info(f"{icon}  {method:7s} {path}  {status}  {elapsed:.1f}ms")
+        return response
+
+app.add_middleware(RequestLoggerMiddleware)
 
 # Mount routers
 app.include_router(auth_router, prefix="/auth")
