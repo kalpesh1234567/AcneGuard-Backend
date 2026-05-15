@@ -120,8 +120,8 @@ class AcneGuardEngine:
         prompt = f"USER DATA:\n{json.dumps(payload, indent=2)}\n\nGenerate the structured response."
 
         try:
-            # 2. Call Gemini using the new SDK
-            response = client.models.generate_content(
+            # 2. Call Gemini using async SDK to avoid blocking the event loop
+            response = await client.aio.models.generate_content(
                 model=MODEL_NAME,
                 contents=[SYSTEM_PROMPT, prompt],
                 config=types.GenerateContentConfig(
@@ -183,7 +183,7 @@ class AcneGuardEngine:
         prompt = f"USER DIET DATA:\n{json.dumps(diet_data, indent=2)}\n\nPREDICTED RISK: {risk_level}\n\nProvide 3-5 specific 'main_causes' and 4-6 specific 'recommendations' strictly following the JSON schema."
 
         try:
-            response = client.models.generate_content(
+            response = await client.aio.models.generate_content(
                 model=MODEL_NAME,
                 contents=[DIET_SYSTEM_PROMPT, prompt],
                 config=types.GenerateContentConfig(
