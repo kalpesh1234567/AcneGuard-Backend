@@ -2,7 +2,7 @@ services:
   - type: web
     name: acneguard-backend
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: apt-get install -y libgl1-mesa-glx libgles2-mesa libgles2 libegl1 && pip install -r requirements.txt
     startCommand: gunicorn -w 1 --timeout 300 -b 0.0.0.0:$PORT -k uvicorn.workers.UvicornWorker --preload api:app
     healthCheckPath: /
     envVars:

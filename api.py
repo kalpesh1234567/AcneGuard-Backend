@@ -168,7 +168,18 @@ async def analyze_acne(
             except Exception as e:
                 print(f"[API] Failed to parse user_routine: {e}")
 
-        if analysis.localization and not analysis.localization.face_detected:
+        if analysis.localization and analysis.localization.method == "multi_face_rejected":
+            raise HTTPException(
+                status_code=400, 
+                detail="Multiple faces detected. Please upload a photo with only one face clearly visible."
+            )
+
+        # Only reject if MediaPipe ran and explicitly found no face (not a fallback)
+        if (
+            analysis.localization
+            and not analysis.localization.face_detected
+            and analysis.localization.method == "mediapipe_facemesh"
+        ):
             raise HTTPException(
                 status_code=400, 
                 detail="No face detected. Please upload a correct image containing a clearly visible face."
